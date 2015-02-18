@@ -5,6 +5,7 @@ import (
 	logrus "github.com/Sirupsen/logrus"
 	"github.com/coreos/go-systemd/journal"
 	"io/ioutil"
+	"strings"
 )
 
 type JournalHook struct{}
@@ -24,8 +25,10 @@ var (
 func stringifyEntries(data map[string]interface{}) map[string]string {
 	entries := make(map[string]string)
 	for k, v := range data {
-		// Journal wants uppercase strings.
-		entries[k] = fmt.Sprintf("%v", v)
+		// Journal wants uppercase strings. See `validVarName`
+		// https://github.com/coreos/go-systemd/blob/a58a86fe/journal/send.go#L124
+		key := strings.ToUpper(k)
+		entries[key] = fmt.Sprintf("%v", v)
 	}
 	return entries
 }

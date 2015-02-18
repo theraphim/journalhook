@@ -9,11 +9,11 @@ func TestStringifyEntries(t *testing.T) {
 	}
 
 	output := stringifyEntries(input)
-	if output["foo"] != "bar" {
+	if output["FOO"] != "bar" {
 		t.Fatalf("%v", output)
 		t.Fatalf("expected value 'bar'. Got %q", output["foo"])
 	}
-	if output["baz"] != "123" {
+	if output["BAZ"] != "123" {
 		t.Fatalf("expected value '123'. Got %q", output["baz"])
 	}
 }
