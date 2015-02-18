@@ -1,4 +1,4 @@
-package journal_hook
+package journalhook
 
 import "testing"
 
