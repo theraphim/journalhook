@@ -28,7 +28,7 @@ func stringifyEntries(data map[string]interface{}) map[string]string {
 		// Journal wants uppercase strings. See `validVarName`
 		// https://github.com/coreos/go-systemd/blob/a58a86fe/journal/send.go#L124
 		key := strings.ToUpper(k)
-		entries[key] = fmt.Sprintf("%v", v)
+		entries[key] = fmt.Sprint(v)
 	}
 	return entries
 }
