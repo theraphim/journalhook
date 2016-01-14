@@ -2,7 +2,7 @@
 
 systemd-journald hook for logrus
 
-[![wercker status](https://app.wercker.com/status/2d466972b06fc3fd47c18de8ffc6393d/m "wercker status")](https://app.wercker.com/project/bykey/2d466972b06fc3fd47c18de8ffc6393d)
+[![wercker status](https://app.wercker.com/status/2d466972b06fc3fd47c18de8ffc6393d/m/master "wercker status")](https://app.wercker.com/project/bykey/2d466972b06fc3fd47c18de8ffc6393d)
 
 ## Use
 
