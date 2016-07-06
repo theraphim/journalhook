@@ -2,10 +2,11 @@ package journalhook
 
 import (
 	"fmt"
-	logrus "github.com/Sirupsen/logrus"
-	"github.com/coreos/go-systemd/journal"
 	"io/ioutil"
 	"strings"
+
+	logrus "github.com/Sirupsen/logrus"
+	"github.com/coreos/go-systemd/journal"
 )
 
 type JournalHook struct{}
@@ -21,13 +22,37 @@ var (
 	}
 )
 
+func stringifyOp(r rune) rune {
+	// Journal wants uppercase strings. See `validVarName`
+	// https://github.com/coreos/go-systemd/blob/ff118ad0f8d9cf99903d3391ca3a295671022cee/journal/journal.go#L137-L147
+	switch {
+	case r >= 'A' && r <= 'Z':
+		return r
+	case r >= '0' && r <= '9':
+		return r
+	case r == '_':
+		return r
+	case r >= 'a' && r <= 'z':
+		return r - 32
+	default:
+		return rune('_')
+	}
+}
+
+func stringifyKey(key string) string {
+	key = strings.Map(stringifyOp, key)
+	if strings.HasPrefix(key, "_") {
+		key = strings.TrimPrefix(key, "_")
+	}
+	return key
+}
+
 // Journal wants strings but logrus takes anything.
 func stringifyEntries(data map[string]interface{}) map[string]string {
 	entries := make(map[string]string)
 	for k, v := range data {
-		// Journal wants uppercase strings. See `validVarName`
-		// https://github.com/coreos/go-systemd/blob/a58a86fe/journal/send.go#L124
-		key := strings.ToUpper(k)
+
+		key := stringifyKey(k)
 		entries[key] = fmt.Sprint(v)
 	}
 	return entries
