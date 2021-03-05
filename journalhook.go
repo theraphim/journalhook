@@ -3,7 +3,9 @@ package journalhook
 import (
 	"fmt"
 	"io/ioutil"
+	"os"
 	"strings"
+	"sync"
 
 	"github.com/coreos/go-systemd/v22/journal"
 	logrus "github.com/sirupsen/logrus"
@@ -74,13 +76,32 @@ func (hook *JournalHook) Levels() []logrus.Level {
 	}
 }
 
-// Adds the Journal hook if journal is enabled
-// Sets log output to ioutil.Discard so stdout isn't captured.
-func Enable() {
+func enable() {
 	if !journal.Enabled() {
 		logrus.Warning("Journal not available but user requests we log to it. Ignoring")
 	} else {
 		logrus.AddHook(&JournalHook{})
 		logrus.SetOutput(ioutil.Discard)
+	}
+}
+
+func Enable() {
+	enabled.Do(enable)
+}
+
+var enabled sync.Once
+
+func findVar(names ...string) bool {
+	for _, v := range names {
+		if _, ok := os.LookupEnv(v); ok {
+			return true
+		}
+	}
+	return false
+}
+
+func init() {
+	if findVar("LISTEN_PID", "LISTEN_FDS") {
+		Enable()
 	}
 }
